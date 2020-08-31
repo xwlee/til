@@ -5,9 +5,18 @@ Mount host volume into a container:
 $ docker run -it -v "$PWD":/data ubuntu:14.04 /bin/bash
 root@44d71a605b5b:/#
 
-# { ..., "RW": true, "Propagation": "rprivate" }
-$ docker inspect -f {{.Mounts}} 44d71a605b5b 
-[{ /home/vagrant/data /data   true rprivate}]
+# { ..., "RW": true, "Propagation": "rprivate" } 
+$ docker inspect -f '{{ json .Mounts }}' 44d71a605b5b | python -m json.tool
+[
+    {
+        "Destination": "/data",
+        "Mode": "",
+        "Propagation": "rprivate",
+        "RW": true,
+        "Source": "/Users/john/code",
+        "Type": "bind"
+    }
+]
 ```
 
 Create a new volume inside a container:
@@ -16,6 +25,17 @@ $ docker run -ti -v /cookbook ubuntu:14.04 /bin/bash
 root@34e7ef4dd55a:/#
 
 # { ..., "Driver": "local", "RW": true }
-$ docker inspect -f {{.Mounts}} 34e7ef4dd55a
-[{513d288ce950b078c92da2da277a4f79ce8b0aa9cbf75e230a51149d65a4b669 /var/lib/docker/volumes/513d288ce950b078c92da2da277a4f79ce8b0aa9cbf75e230a51149d65a4b669/_data /cookbook local  true }]
+$ docker inspect -f '{{ json .Mounts }}' 34e7ef4dd55a | python -m json.tool
+[
+    {
+        "Destination": "/cookbook",
+        "Driver": "local",
+        "Mode": "",
+        "Name": "0e307e47c84938336999e65725b53f32bb2755244bfe28383af9fc03a4a0ef69",
+        "Propagation": "",
+        "RW": true,
+        "Source": "/var/lib/docker/volumes/0e307e47c84938336999e65725b53f32bb2755244bfe28383af9fc03a4a0ef69/_data",
+        "Type": "volume"
+    }
+]
 ```
